@@ -381,11 +381,11 @@ export const AppLayout = ({ children }: LayoutProps) => {
                           </MenuItem>
                         </a>
                       </Link>
-                      <Link href={`/org/${currentOrg?.id}/${ProjectType.KMS}/overview`} passHref>
+                      <Link href={`/org/${currentOrg?.id}/user-secrets-manager`} passHref>
                         <a>
                           {/* TODO: change with better lottie icon */}
                           <MenuItem
-                            isSelected={router.asPath.includes(`/${ProjectType.KMS}/overview`)}
+                            isSelected={router.asPath.includes("/user-secrets-manager")}
                             icon="consumerSecrets"
                           >
                             User Secrets
