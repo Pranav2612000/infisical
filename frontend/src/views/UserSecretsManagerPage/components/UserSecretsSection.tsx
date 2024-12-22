@@ -67,7 +67,7 @@ export const UserSecretsSection = () => {
         isOpen={popUp.deleteUserSecretConfirmation.isOpen}
         title={`Delete ${
           (popUp?.deleteUserSecretConfirmation?.data as DeleteModalData)?.name || " "
-        } shared secret?`}
+        } user secret?`}
         onChange={(isOpen) => handlePopUpToggle("deleteUserSecretConfirmation", isOpen)}
         deleteKey={(popUp?.deleteUserSecretConfirmation?.data as DeleteModalData)?.name}
         onClose={() => handlePopUpClose("deleteUserSecretConfirmation")}

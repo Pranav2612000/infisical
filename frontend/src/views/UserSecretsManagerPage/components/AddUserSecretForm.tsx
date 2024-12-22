@@ -7,15 +7,9 @@ import { Button, FormControl, Input, Select, SelectItem } from "@app/components/
 import { TCredentialTypes, TSecretData, useCreateUserSecret } from "@app/hooks/api/userSecrets";
 import { UsePopUpState } from "@app/hooks/usePopUp";
 
-import supportedSecretTypes from "../supportedSecretTypes";
+import { supportedSecretTypes, userSecretSchema } from "../supportedSecretTypes";
 
-const schema = z.object({
-  name: z.string(),
-  credentialType: z.nativeEnum(TCredentialTypes),
-  secretData: z.custom<TSecretData>()
-});
-
-export type FormData = z.infer<typeof schema>;
+export type FormData = z.infer<typeof userSecretSchema>;
 type Props = {
   handlePopUpClose: (
     popUpName: keyof UsePopUpState<["createUserSecret"]>,
@@ -32,13 +26,9 @@ export const AddUserSecretForm = ({ handlePopUpClose }: Props) => {
     formState: { isSubmitting },
     watch
   } = useForm<FormData>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(userSecretSchema),
     defaultValues: {
       credentialType: TCredentialTypes.WebLoginSecret,
-      secretData: {
-        username: "",
-        password: ""
-      }
     }
   });
   const credentialTypeVal = watch("credentialType");
@@ -51,7 +41,7 @@ export const AddUserSecretForm = ({ handlePopUpClose }: Props) => {
     const supportedKeys = supportedSecretTypes[credentialType].map(entry => entry.name);
     const parsedSecretData = Object.keys(secretData)
       .filter(key => supportedKeys.includes(key))
-      .reduce((acc, curr) => {
+      .reduce((acc: any, curr) => {
         acc[curr as keyof TSecretData] = secretData[curr as keyof TSecretData];
 
         return acc;
@@ -120,27 +110,31 @@ export const AddUserSecretForm = ({ handlePopUpClose }: Props) => {
         )}
       />
       {
-        supportedSecretTypes[credentialTypeVal].map((credentialTypeFieldConfig) => {
+        supportedSecretTypes[credentialTypeVal].map(({
+          name,
+          label,
+          placeholder,
+          type,
+          ...credentialTypeValFields
+        }) => {
           return (
             <Controller
-                key={credentialTypeFieldConfig.name}
+                key={name}
                 control={control}
-                name="secretData"
+                name={`secretData.${name}`}
                 render={({ field: { onChange, value, ...field }, fieldState: { error } }) => (
                   <FormControl
-                    label={credentialTypeFieldConfig.label}
+                    label={label}
                     isError={Boolean(error)}
                     errorText={error?.message}
                   >
                     <Input
                       {...field}
-                      onChange={(e) => onChange({
-                        ...value,
-                        [credentialTypeFieldConfig.name]: e.target.value
-                      })}
-                      value={(value[credentialTypeFieldConfig.name as keyof TSecretData])}
-                      placeholder={credentialTypeFieldConfig.placeholder}
-                      type={credentialTypeFieldConfig.type}
+                      {...credentialTypeValFields}
+                      onChange={(e) => onChange(e.target.value)}
+                      value={value?.toString()}
+                      placeholder={placeholder}
+                      type={type}
                     />
                   </FormControl>
                 )}

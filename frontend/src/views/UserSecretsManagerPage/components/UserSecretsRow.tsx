@@ -8,7 +8,7 @@ import { useToggle } from "@app/hooks";
 import { TSecretData, TUserSecret, useGetUserSecretById } from "@app/hooks/api/userSecrets";
 import { UsePopUpState } from "@app/hooks/usePopUp";
 
-import supportedSecretTypes from "../supportedSecretTypes";
+import { supportedSecretTypes } from "../supportedSecretTypes";
 import { getContentForCredentialType } from "./helpers";
 
 export const UserSecretsRow = ({
