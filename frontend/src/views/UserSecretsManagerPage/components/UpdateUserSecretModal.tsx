@@ -10,9 +10,13 @@ type Props = {
     popUpName: keyof UsePopUpState<["updateUserSecret"]>,
     state?: boolean
   ) => void;
+  handlePopUpClose: (
+    popUpName: keyof UsePopUpState<["updateUserSecret"]>,
+    state?: boolean
+  ) => void;
 };
 
-export const UpdateUserSecretModal = ({ popUp, handlePopUpToggle }: Props) => {
+export const UpdateUserSecretModal = ({ popUp, handlePopUpToggle, handlePopUpClose }: Props) => {
   const { data, isLoading } = useGetUserSecretById({
     userSecretId: popUp.updateUserSecret?.data?.id || "",
     enabled: true
@@ -30,7 +34,7 @@ export const UpdateUserSecretModal = ({ popUp, handlePopUpToggle }: Props) => {
         subTitle="Securely store secrets like credit cards, web logins and more"
       >
         {isLoading ? "Loading..." : (
-          <UpdateUserSecretForm data={data}/>
+          <UpdateUserSecretForm data={data} handlePopUpClose={handlePopUpClose}/>
         )}
       </ModalContent>
     </Modal>

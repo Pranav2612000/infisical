@@ -5,6 +5,7 @@ import { z } from "zod";
 import { createNotification } from "@app/components/notifications";
 import { Button, FormControl, Input, Select, SelectItem } from "@app/components/v2";
 import { TCredentialTypes, TSecretData, useCreateUserSecret } from "@app/hooks/api/userSecrets";
+import { UsePopUpState } from "@app/hooks/usePopUp";
 
 import supportedSecretTypes from "../supportedSecretTypes";
 
@@ -15,8 +16,14 @@ const schema = z.object({
 });
 
 export type FormData = z.infer<typeof schema>;
+type Props = {
+  handlePopUpClose: (
+    popUpName: keyof UsePopUpState<["createUserSecret"]>,
+    state?: boolean
+  ) => void;
+};
 
-export const AddUserSecretForm = () => {
+export const AddUserSecretForm = ({ handlePopUpClose }: Props) => {
   const createUserSecret = useCreateUserSecret();
 
   const {
@@ -62,6 +69,7 @@ export const AddUserSecretForm = () => {
         text: "Secret created successfully",
         type: "success"
       });
+      handlePopUpClose("createUserSecret");
     } catch (error) {
       console.error(error);
       createNotification({

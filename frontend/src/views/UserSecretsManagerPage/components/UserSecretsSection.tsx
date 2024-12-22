@@ -61,8 +61,8 @@ export const UserSecretsSection = () => {
         </Button>
       </div>
       <UserSecretsTable handlePopUpOpen={handlePopUpOpen} />
-      <UpdateUserSecretModal popUp={popUp} handlePopUpToggle={handlePopUpToggle} />
-      <AddUserSecretModal popUp={popUp} handlePopUpToggle={handlePopUpToggle} />
+      <UpdateUserSecretModal popUp={popUp} handlePopUpToggle={handlePopUpToggle} handlePopUpClose={handlePopUpClose}/>
+      <AddUserSecretModal popUp={popUp} handlePopUpToggle={handlePopUpToggle} handlePopUpClose={handlePopUpClose}/>
       <DeleteActionModal
         isOpen={popUp.deleteUserSecretConfirmation.isOpen}
         title={`Delete ${

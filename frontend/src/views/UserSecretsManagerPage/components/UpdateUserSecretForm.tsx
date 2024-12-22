@@ -5,6 +5,7 @@ import { z } from "zod";
 import { createNotification } from "@app/components/notifications";
 import { Button, FormControl, Input, Select, SelectItem } from "@app/components/v2";
 import { TCredentialTypes, TSecretData, TViewUserSecretResponse, useUpdateUserSecret } from "@app/hooks/api/userSecrets";
+import { UsePopUpState } from "@app/hooks/usePopUp";
 
 import supportedSecretTypes from "../supportedSecretTypes";
 
@@ -16,8 +17,15 @@ const schema = z.object({
 
 
 export type FormData = z.infer<typeof schema>;
+type Props = {
+  data: TViewUserSecretResponse | undefined;
+  handlePopUpClose: (
+    popUpName: keyof UsePopUpState<["updateUserSecret"]>,
+    state?: boolean
+  ) => void;
+};
 
-export const UpdateUserSecretForm = ({ data }: { data: TViewUserSecretResponse | undefined }) => {
+export const UpdateUserSecretForm = ({ data, handlePopUpClose }: Props) => {
   const updateUserSecret = useUpdateUserSecret();
   const {
     control,
@@ -62,6 +70,7 @@ export const UpdateUserSecretForm = ({ data }: { data: TViewUserSecretResponse |
         text: "Secret updated successfully",
         type: "success"
       });
+      handlePopUpClose("updateUserSecret");
     } catch (error) {
       console.error(error);
       createNotification({
