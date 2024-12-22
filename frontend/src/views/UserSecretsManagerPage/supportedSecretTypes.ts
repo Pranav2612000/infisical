@@ -60,7 +60,7 @@ export const supportedSecretTypes = {
     },
     {
       "name": "content",
-      "type": "Content",
+      "type": "textarea",
       "placeholder": "Content",
       "label": "Content",
       "validator": z.string().min(1)

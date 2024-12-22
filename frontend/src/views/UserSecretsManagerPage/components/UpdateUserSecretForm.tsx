@@ -8,6 +8,7 @@ import { TSecretData, TViewUserSecretResponse, useUpdateUserSecret } from "@app/
 import { UsePopUpState } from "@app/hooks/usePopUp";
 
 import { supportedSecretTypes, supportedSecretTypesContentMap, userSecretSchema } from "../supportedSecretTypes";
+import { UserSecretFormInput } from "./UserSecretFormInput";
 
 export type FormData = z.infer<typeof userSecretSchema>;
 type Props = {
@@ -130,10 +131,10 @@ export const UpdateUserSecretForm = ({ data, handlePopUpClose }: Props) => {
                     isError={Boolean(error)}
                     errorText={error?.message}
                   >
-                    <Input
-                      {...field}
-                      {...credentialTypeValFields}
-                      onChange={(e) => onChange(e.target.value)}
+                    <UserSecretFormInput
+                      field={field}
+                      credentialTypeValFields={credentialTypeValFields}
+                      onChange={(e) => onChange(e)}
                       value={value?.toString()}
                       placeholder={placeholder}
                       type={type}
