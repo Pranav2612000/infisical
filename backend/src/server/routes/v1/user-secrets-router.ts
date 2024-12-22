@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { UserSecretsSchema } from "@app/db/schemas";
-import { readLimit, userSecretCreationLimit } from "@app/server/config/rateLimiter";
+import { readLimit, userSecretCreationLimit, writeLimit } from "@app/server/config/rateLimiter";
 import { verifyAuth } from "@app/server/plugins/auth/verify-auth";
 import { AuthMode } from "@app/services/auth/auth-type";
 import { TCredentialTypes, TCreditCardSecret, TWebLoginSecret } from "@app/services/user-secrets/user-secrets-types";
@@ -72,6 +72,103 @@ export const registerUserSecretsRouter = async (server: FastifyZodProvider) => {
         ...req.body
       });
       return { id: sharedSecret.id };
+    }
+  });
+
+  server.route({
+    method: "GET",
+    url: "/:userSecretId",
+    config: {
+      rateLimit: writeLimit
+    },
+    schema: {
+      params: z.object({
+        userSecretId: z.string()
+      }),
+      response: {
+        200: UserSecretsSchema
+      }
+    },
+    onRequest: verifyAuth([AuthMode.JWT]),
+    handler: async (req) => {
+      const { userSecretId } = req.params;
+      const userSecret = await req.server.services.userSecrets.getUserSecretById({
+        actor: req.permission.type,
+        actorId: req.permission.id,
+        orgId: req.permission.orgId,
+        actorAuthMethod: req.permission.authMethod,
+        actorOrgId: req.permission.orgId,
+        userSecretId
+      });
+
+      return { ...userSecret };
+    }
+  });
+
+  server.route({
+    method: "PUT",
+    url: "/:userSecretId",
+    config: {
+      rateLimit: writeLimit
+    },
+    schema: {
+      body: z.object({
+        name: z.string(),
+        credentialType: z.nativeEnum(TCredentialTypes).default(TCredentialTypes.WebLoginSecret),
+        secretData: z.custom<TCreditCardSecret | TWebLoginSecret>(),
+        metadata: z.custom<Record<string, string>>()
+      }),
+      params: z.object({
+        userSecretId: z.string()
+      }),
+      response: {
+        200: UserSecretsSchema
+      }
+    },
+    onRequest: verifyAuth([AuthMode.JWT]),
+    handler: async (req) => {
+      const { userSecretId } = req.params;
+      const updatedUserSecret = await req.server.services.userSecrets.updateUserSecretById({
+        actor: req.permission.type,
+        actorId: req.permission.id,
+        orgId: req.permission.orgId,
+        actorAuthMethod: req.permission.authMethod,
+        actorOrgId: req.permission.orgId,
+        userSecretId,
+        ...req.body
+      });
+
+      return { ...updatedUserSecret };
+    }
+  });
+
+  server.route({
+    method: "DELETE",
+    url: "/:userSecretId",
+    config: {
+      rateLimit: writeLimit
+    },
+    schema: {
+      params: z.object({
+        userSecretId: z.string()
+      }),
+      response: {
+        200: UserSecretsSchema
+      }
+    },
+    onRequest: verifyAuth([AuthMode.JWT]),
+    handler: async (req) => {
+      const { userSecretId } = req.params;
+      const deletedUserSecret = await req.server.services.userSecrets.deleteUserSecretById({
+        actor: req.permission.type,
+        actorId: req.permission.id,
+        orgId: req.permission.orgId,
+        actorAuthMethod: req.permission.authMethod,
+        actorOrgId: req.permission.orgId,
+        userSecretId
+      });
+
+      return { ...deletedUserSecret };
     }
   });
 };

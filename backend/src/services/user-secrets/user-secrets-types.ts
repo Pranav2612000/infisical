@@ -30,10 +30,6 @@ export type TUserSecretPermission = {
   actorAuthMethod: ActorAuthMethod;
   actorOrgId: string;
   orgId: string;
-  name?: string;
-  credentialType: TCredentialTypes;
-  secretData: TWebLoginSecret | TCreditCardSecret;
-  metadata: Record<string, string>;
 };
 
 export type TCreateUserSecretDTO = {
@@ -43,13 +39,20 @@ export type TCreateUserSecretDTO = {
   metadata: Record<string, string>;
 } & TSharedSecretPermission;
 
+export type TUpdateUserSecretDTO = {
+  userSecretId: string;
+  name: string;
+  credentialType: TCredentialTypes;
+  secretData: TWebLoginSecret | TCreditCardSecret;
+  metadata: Record<string, string>;
+} & TSharedSecretPermission;
+
 export type TGetUserSecretByIdDTO = {
   userSecretId: string;
-  orgId?: string;
-};
+} & TUserSecretPermission;
 
 export type TValidateUserSecretDTO = TGetUserSecretByIdDTO;
 
-export type TDeleteSharedSecretDTO = {
-  sharedSecretId: string;
+export type TDeleteUserSecretDTO = {
+  userSecretId: string;
 } & TUserSecretPermission;
