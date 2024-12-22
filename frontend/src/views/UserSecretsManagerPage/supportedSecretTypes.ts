@@ -2,6 +2,12 @@ import { z } from "zod";
 
 import { TCredentialTypes } from "@app/hooks/api/userSecrets";
 
+export const supportedSecretTypesContentMap: Record<TCredentialTypes, string> = {
+  "WebLoginSecret": "Web Secret",
+  "CreditCardSecret": "Credit Card",
+  "SecureNoteSecret": "Secure Note"
+};
+
 export const supportedSecretTypes = {
   "WebLoginSecret": [
     {
@@ -42,6 +48,22 @@ export const supportedSecretTypes = {
       "label": "CVV",
       "maxLength": 3,
       "validator": z.string().length(3).regex(/^[0-9]*$/, { message: "Only numbers allowed"})
+    }
+  ],
+  "SecureNoteSecret": [
+    {
+      "name": "title",
+      "type": "text",
+      "placeholder": "Title",
+      "label": "Title",
+      "validator": z.string().min(1)
+    },
+    {
+      "name": "content",
+      "type": "Content",
+      "placeholder": "Content",
+      "label": "Content",
+      "validator": z.string().min(1)
     }
   ]
 };

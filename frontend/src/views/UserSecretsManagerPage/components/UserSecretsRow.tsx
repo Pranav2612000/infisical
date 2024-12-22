@@ -8,8 +8,7 @@ import { useToggle } from "@app/hooks";
 import { TSecretData, TUserSecret, useGetUserSecretById } from "@app/hooks/api/userSecrets";
 import { UsePopUpState } from "@app/hooks/usePopUp";
 
-import { supportedSecretTypes } from "../supportedSecretTypes";
-import { getContentForCredentialType } from "./helpers";
+import { supportedSecretTypes, supportedSecretTypesContentMap } from "../supportedSecretTypes";
 
 export const UserSecretsRow = ({
   row,
@@ -51,7 +50,7 @@ export const UserSecretsRow = ({
       >
         <Td>{row.name ? `${row.name}` : "-"}</Td>
         <Td>
-          {getContentForCredentialType(row.credentialType)}
+          {supportedSecretTypesContentMap[row.credentialType]}
         </Td>
         <Td>{`${format(new Date(row.updatedAt), "yyyy-MM-dd - HH:mm a")}`}</Td>
         <Td>{`${format(new Date(row.createdAt), "yyyy-MM-dd - HH:mm a")}`}</Td>

@@ -5,7 +5,8 @@ import { TSharedSecretPermission } from "../secret-sharing/secret-sharing-types"
 
 export enum TCredentialTypes {
   WebLoginSecret = "WebLoginSecret",
-  CreditCardSecret = "CreditCardSecret"
+  CreditCardSecret = "CreditCardSecret",
+  SecureNoteSecret = "SecureNoteSecret"
 }
 
 export type TWebLoginSecret = {
@@ -18,6 +19,13 @@ export type TCreditCardSecret = {
   expiryDate: Date;
   CVV: string;
 };
+
+export type TSecretNoteSecret = {
+  title: string;
+  content: string;
+};
+
+export type TSecretData = TWebLoginSecret | TCreditCardSecret | TSecretNoteSecret;
 
 export type TGetUserSecretsDTO = {
   offset: number;
@@ -35,7 +43,7 @@ export type TUserSecretPermission = {
 export type TCreateUserSecretDTO = {
   name: string;
   credentialType: TCredentialTypes;
-  secretData: TWebLoginSecret | TCreditCardSecret;
+  secretData: TSecretData;
   metadata: Record<string, string>;
 } & TSharedSecretPermission;
 
@@ -43,7 +51,7 @@ export type TUpdateUserSecretDTO = {
   userSecretId: string;
   name: string;
   credentialType: TCredentialTypes;
-  secretData: TWebLoginSecret | TCreditCardSecret;
+  secretData: TSecretData;
   metadata: Record<string, string>;
 } & TSharedSecretPermission;
 

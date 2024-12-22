@@ -15,7 +15,8 @@ export type TUserSecret = {
 
 export enum TCredentialTypes {
   WebLoginSecret = "WebLoginSecret",
-  CreditCardSecret = "CreditCardSecret"
+  CreditCardSecret = "CreditCardSecret",
+  SecureNoteSecret = "SecureNoteSecret"
 }
 
 export type TWebLoginSecret = {
@@ -29,7 +30,12 @@ export type TCreditCardSecret = {
   CVV: string;
 }
 
-export type TSecretData = TWebLoginSecret | TCreditCardSecret;
+export type TSecretNoteSecret = {
+  title: string,
+  content: string
+}
+
+export type TSecretData = TWebLoginSecret | TCreditCardSecret | TSecretNoteSecret;
 
 export type TCreatedUserSecret = {
   id: string;

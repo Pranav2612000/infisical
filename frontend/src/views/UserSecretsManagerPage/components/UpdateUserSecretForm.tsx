@@ -4,10 +4,10 @@ import { z } from "zod";
 
 import { createNotification } from "@app/components/notifications";
 import { Button, FormControl, Input, Select, SelectItem } from "@app/components/v2";
-import { TCredentialTypes, TSecretData, TViewUserSecretResponse, useUpdateUserSecret } from "@app/hooks/api/userSecrets";
+import { TSecretData, TViewUserSecretResponse, useUpdateUserSecret } from "@app/hooks/api/userSecrets";
 import { UsePopUpState } from "@app/hooks/usePopUp";
 
-import { supportedSecretTypes, userSecretSchema } from "../supportedSecretTypes";
+import { supportedSecretTypes, supportedSecretTypesContentMap, userSecretSchema } from "../supportedSecretTypes";
 
 export type FormData = z.infer<typeof userSecretSchema>;
 type Props = {
@@ -104,10 +104,9 @@ export const UpdateUserSecretForm = ({ data, handlePopUpClose }: Props) => {
               onValueChange={(e) => onChange(e)}
               className="w-full"
             >
-              <SelectItem value={TCredentialTypes.WebLoginSecret}>Web Secret</SelectItem>
-              <SelectItem value={TCredentialTypes.CreditCardSecret}>
-                Credit Card
-              </SelectItem>
+              {Object.entries(supportedSecretTypesContentMap).map(([secretType, content]) => {
+                return <SelectItem key={`secret-${secretType}`} value={secretType}>{content}</SelectItem>;
+              })}
             </Select>
           </FormControl>
         )}
