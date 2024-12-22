@@ -119,7 +119,7 @@ export const userSecretsServiceFactory = ({
         userId: actorId,
         orgId: actorOrgId
       },
-      { offset, limit, sort: [["createdAt", "desc"]] }
+      { offset, limit, sort: [["createdAt", "asc"]] }
     );
 
     const count = await userSecretsDAL.countAllUserOrgUserSecrets({
