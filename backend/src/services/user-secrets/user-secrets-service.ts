@@ -3,7 +3,7 @@ import { ForbiddenRequestError } from "@app/lib/errors";
 
 import { TKmsServiceFactory } from "../kms/kms-service";
 import { TUserSecretsDALFactory } from "./user-secrets-dal";
-import { TCreateUserSecretDTO } from "./user-secrets-types";
+import { TCreateUserSecretDTO, TGetUserSecretsDTO } from "./user-secrets-types";
 
 type TUserSecretsServiceFactoryDep = {
   permissionService: Pick<TPermissionServiceFactory, "getOrgPermission">;
@@ -55,7 +55,39 @@ export const userSecretsServiceFactory = ({
     return { id: newUserSecret.id };
   };
 
+  const getUserSecrets = async ({ actor, actorId, actorAuthMethod, actorOrgId, offset, limit }: TGetUserSecretsDTO) => {
+    if (!actorOrgId) throw new ForbiddenRequestError();
+
+    const { permission } = await permissionService.getOrgPermission(
+      actor,
+      actorId,
+      actorOrgId,
+      actorAuthMethod,
+      actorOrgId
+    );
+    if (!permission) throw new ForbiddenRequestError({ name: "User does not belong to the specified organization" });
+
+    const secrets = await userSecretsDAL.find(
+      {
+        userId: actorId,
+        orgId: actorOrgId
+      },
+      { offset, limit, sort: [["createdAt", "desc"]] }
+    );
+
+    const count = await userSecretsDAL.countAllUserOrgUserSecrets({
+      orgId: actorOrgId,
+      userId: actorId
+    });
+
+    return {
+      secrets,
+      totalCount: count
+    };
+  };
+
   return {
-    createUserSecret
+    createUserSecret,
+    getUserSecrets
   };
 };
