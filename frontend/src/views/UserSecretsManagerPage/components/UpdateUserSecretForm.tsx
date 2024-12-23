@@ -153,7 +153,7 @@ export const UpdateUserSecretForm = ({ data, handlePopUpClose }: Props) => {
         isLoading={isSubmitting}
         isDisabled={isSubmitting}
       >
-        Create Secret
+        Update Secret
       </Button>
     </form>
   )

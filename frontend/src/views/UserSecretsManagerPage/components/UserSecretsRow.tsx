@@ -1,14 +1,76 @@
-import { useEffect } from "react";
-import { faEye, faEyeSlash, faPencil, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { useEffect, useState } from "react";
+import { faCopy, faEye, faEyeSlash, faPencil, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { format } from "date-fns";
 
+import { createNotification } from "@app/components/notifications";
 import { Button, IconButton, TableContainer, Td, Tr } from "@app/components/v2";
 import { useToggle } from "@app/hooks";
-import { TSecretData, TUserSecret, useGetUserSecretById } from "@app/hooks/api/userSecrets";
+import { TSecretData, TUserSecret, TViewUserSecretResponse, useGetUserSecretById } from "@app/hooks/api/userSecrets";
 import { UsePopUpState } from "@app/hooks/usePopUp";
 
 import { supportedSecretTypes, supportedSecretTypesContentMap } from "../supportedSecretTypes";
+
+const UserSecretField = ({
+  row,
+  secretField,
+  data,
+  isSecretVisible
+}: {
+  row: TUserSecret;
+  secretField: string;
+  data: TViewUserSecretResponse | undefined;
+  isSecretVisible: boolean;
+}) => {
+  const [isHoveringField, setIsHoveringField] = useState(false);
+
+  return (
+    <tr
+      key={`user-secret-${row.id}-${secretField}`}
+      className="hover:bg-mineshaft-700"
+      onMouseEnter={() => setIsHoveringField(true)}
+      onMouseLeave={() => setIsHoveringField(false)}
+    >
+      <td
+        className="flex h-full items-center"
+        style={{ padding: "0.25rem 1rem" }}
+      >
+        <div title={secretField} className="flex h-8 w-[8rem] items-center space-x-2 ">
+          <span className="truncate">
+            {supportedSecretTypes[row.credentialType]
+              .find((entry) => (entry.name === secretField))?.label}
+          </span>
+        </div>
+      </td>
+      <td
+        className="col-span-2 h-8 w-full"
+        style={{ padding: "0.25rem 1rem" }}
+      >
+        <span>{isSecretVisible ? data?.secretData?.[secretField as keyof TSecretData] : "********"}</span>
+        {isHoveringField && (
+          <IconButton
+            onClick={() => {
+              const secret = data?.secretData?.[secretField as keyof TSecretData];
+              if (!secret) {
+                return;
+              }
+              navigator.clipboard.writeText(data?.secretData?.[secretField as keyof TSecretData]);
+              createNotification({
+                text: "Secret copied",
+                type: "success"
+              });
+            }}
+            variant="plain"
+            ariaLabel="copy"
+            className="ml-5"
+          >
+          <FontAwesomeIcon icon={faCopy} />
+        </IconButton>
+        )}
+      </td>
+    </tr>
+  );
+};
 
 export const UserSecretsRow = ({
   row,
@@ -34,11 +96,11 @@ export const UserSecretsRow = ({
   });
 
   useEffect(() => {
-    if (!isSecretVisible) {
+    if (!isRowExpanded) {
       return; 
     }
     refetch();
-  }, [isSecretVisible]);
+  }, [isRowExpanded]);
 
   return (
     <>
@@ -124,29 +186,14 @@ export const UserSecretsRow = ({
                     {Object.keys(row?.secretData || []).map((secretField) => {
 
                       return (
-                        <tr
-                          key={`user-secret-${row.id}-${secretField}`}
-                          className="hover:bg-mineshaft-700"
-                        >
-                          <td
-                            className="flex h-full items-center"
-                            style={{ padding: "0.25rem 1rem" }}
-                          >
-                            <div title={secretField} className="flex h-8 w-[8rem] items-center space-x-2 ">
-                              <span className="truncate">
-                                {supportedSecretTypes[row.credentialType]
-                                  .find((entry) => (entry.name === secretField))?.label}
-                              </span>
-                            </div>
-                          </td>
-                          <td
-                            className="col-span-2 h-8 w-full"
-                            style={{ padding: "0.25rem 1rem" }}
-                          >
-                            <span>{isSecretVisible ? data?.secretData?.[secretField as keyof TSecretData] : "********"}</span>
-                          </td>
-                        </tr>
-                      );
+                        <UserSecretField
+                          key={`${row.id}-${secretField}`}
+                          row={row}
+                          data={data}
+                          isSecretVisible={isSecretVisible}
+                          secretField={secretField}
+                        />
+                      )
                     })}
                   </tbody>
                 </table>
