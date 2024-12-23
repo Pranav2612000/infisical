@@ -381,6 +381,17 @@ export const AppLayout = ({ children }: LayoutProps) => {
                           </MenuItem>
                         </a>
                       </Link>
+                      <Link href={`/org/${currentOrg?.id}/user-secrets-manager`} passHref>
+                        <a>
+                          {/* TODO: change with better lottie icon */}
+                          <MenuItem
+                            isSelected={router.asPath.includes("/user-secrets-manager")}
+                            icon="consumerSecrets"
+                          >
+                            User Secrets
+                          </MenuItem>
+                        </a>
+                      </Link>
                       <Link href={`/org/${currentOrg?.id}/members`} passHref>
                         <a>
                           <MenuItem

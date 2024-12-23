@@ -54,6 +54,7 @@ export enum TableName {
   SnapshotSecret = "secret_snapshot_secrets",
   SnapshotFolder = "secret_snapshot_folders",
   SecretTag = "secret_tags",
+  UserSecrets = "user_secrets",
   Integration = "integrations",
   IntegrationAuth = "integration_auths",
   ServiceToken = "service_tokens",
